@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Steg1_4.Model
 {
+    //Möjliga resultat
     public enum OutCome
     {
         Indefinite,
@@ -21,6 +22,7 @@ namespace Steg1_4.Model
         private List<int> _previousGuesses;
         public const int MaxNumberOfGuesses = 7;
 
+        //Får en gissning göras?
         public bool CanMakeGuess
         {
             get
@@ -35,6 +37,8 @@ namespace Steg1_4.Model
                 return _previousGuesses.Count;
             }
         }
+
+        //Det hemliga talet
         public int? Number
         {
             get
@@ -69,6 +73,7 @@ namespace Steg1_4.Model
             }
         }
 
+        //Initieringslogik
         public void Initialize()
         {
             Random rnd = new Random();
@@ -76,30 +81,37 @@ namespace Steg1_4.Model
             _previousGuesses.Clear();
             OutCome = OutCome.Indefinite;
         }
+        //Gissningslogik
         public OutCome MakeGuess(int guess)
         {
+            //Kontrollera att talet är mellan 1 och 100
             if (guess < 1 || guess > 100)
             {
                 throw new ArgumentOutOfRangeException("Otillåten gissning");
             }
+            //Kontrollera att en gissning får göras
             if (CanMakeGuess != true)
             {
                 OutCome = OutCome.NoMoreGuesses;
                 return OutCome;
             }
+            //Har gissningen redan gjorts?
             if (PreviousGuesses.Contains(guess))
             {
                 OutCome = OutCome.PreviousGuess;
                 return OutCome;
             }
+            //Är gissningen mindre än hemliga talet?
             if (guess < _number)
             {
                 OutCome = OutCome.Low;
             }
+            //Högre?
             else if (guess > _number)
             {
                 OutCome = OutCome.High;
             }
+            //Rätt?
             else if (guess == _number)
             {
                 OutCome = OutCome.Correct;
@@ -110,8 +122,8 @@ namespace Steg1_4.Model
                 throw new ApplicationException("Något gick snett");
             }
 
-            _previousGuesses.Add(guess);
-            return OutCome;
+            _previousGuesses.Add(guess);        //Lägg till gissningen i gissningshistorik
+            return OutCome;                     //Returnera resultat
         }
         public SecretNumber()
         {

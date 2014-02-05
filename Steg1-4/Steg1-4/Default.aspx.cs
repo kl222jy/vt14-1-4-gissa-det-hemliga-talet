@@ -10,33 +10,39 @@ namespace Steg1_4
 {
     public partial class _Default : Page
     {
+        //Hantering av SecretNumber objekt från Session
         private SecretNumber sn
         {
             get
             {
-                if (Session["sn"] != null)
+                if (Session["sn"] != null)          
                 {
                     return (SecretNumber)Session["sn"];
                 }
                 else
                 {
+                    //Objektet finns inte i session, skapa det.
                     Session["sn"] = new SecretNumber();
                     return (SecretNumber)Session["sn"];
                 }
             }
         }
+        //Page load, sätter fokus på textbox och aktiverar validering för tomt fält.
         protected void Page_Load(object sender, EventArgs e)
         {
             TextBoxGuess.Focus();
             RequiredFieldValidator1.Enabled = true;
         }
 
+        //Presentationslogik för hemliga talet
         protected void ButtonGuess_Click(object sender, EventArgs e)
         {
             if (Page.IsValid)
             {
+                //Hämtar resultat för gissningen
                 OutCome result = sn.MakeGuess(int.Parse(TextBoxGuess.Text));
 
+                //Presenterar tidigare gissningar
                 LiteralGuesses.Text = string.Join(", ", sn.PreviousGuesses);
 
                 switch (result)
@@ -62,6 +68,7 @@ namespace Steg1_4
                     default:
                         throw new ApplicationException("Något gick snett");
                 }
+                //Kontrollerar antalet gissningar som gjorts
                 if (sn.Count == 7)
                 {
                     LiteralFail.Text = "Du har inga gissningar kvar, det hemliga talet var " + sn.Number + ".";
@@ -70,6 +77,7 @@ namespace Steg1_4
             }
         }
 
+        //Omstart av spelet, återaktiverar deaktiverade kontroller och initierar secretnumber
         protected void ButtonNewSecretNumber_Click(object sender, EventArgs e)
         {
             sn.Initialize();
@@ -81,6 +89,7 @@ namespace Steg1_4
             Response.Redirect(Request.RawUrl);
         }
 
+        //Presentationslogik för när ett spel är slut
         private void GameOver()
         {
             TextBoxGuess.Enabled = false;
